@@ -1,0 +1,23 @@
+#Description of how the build system works
+
+= Introduction =
+
+In an ideal world Documentum development would follow the same pattern as mainstream Enterprise Java development practices where tools such as Maven have become popular in standardising and (arguably) simplifying build and deployment processes. [http://martinfowler.com/articles/continuousIntegration.html Continuous Integration] has also helped in fostering good build practices.
+
+..but Documentum development has always been different ;-/
+
+This project is an experiment in making Documentum development a bit more mainstream.
+
+= Tools for the Job =
+  * [http://nexus.sonatype.org Nexus Maven Repository Manager]
+  * [http://tomcat.apache.org Apache Tomcat]
+  * [http://ant.apache.org Apache Ant]
+  * [http://maven.apache.org Apache Maven]
+  * [http://maven.apache.org/ant-tasks Maven Ant Tasks]
+  * [http://www.documentum.com Documentum Composer]
+
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
