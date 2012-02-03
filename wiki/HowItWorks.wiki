@@ -16,7 +16,6 @@ This project is an experiment in making Documentum development a bit more mainst
   * [http://maven.apache.org/ant-tasks Maven Ant Tasks]
   * [http://www.documentum.com Documentum Composer]
 
-
 = Approach to Development =
 Using the setup described in this project it should be possible for developers to work in the following way:
 
@@ -29,3 +28,12 @@ Using the setup described in this project it should be possible for developers t
   * build job generates compiles code, runs JUnit tests, creates JAR, WAR and DAR artifacts
   * build job deploys JAR, WAR and DAR artifacts to Maven repository
   * build job optionally deploys DAR artifacts to Documentum repository
+  * post-build Jenkins task deploys WAR to application server
+
+= Build System =
+
+I tried, and failed, to use a 100% Maven-based approach but the main problem was that Maven only supports the generation of multiple artifacts (e.g. BOF JARs) if you set up 1 POM per artifact. This basically means that you have to set up a shedload of sub-projects if your Documentum solution uses a bunch of !JarDefs (and most projects do). This is impractical. The things that I really like about Maven though were dependency management, standardisation of project structure and standardisation of project goals (or targets in Ant lingo).
+
+I like Ant. It's simple and flexible. It can be used for multi-project development with a bit of care but there's no OOTB support for dependency management and there's no standard project structure. But we can add dependency management through the use of Maven Ant tasks and standard project structure is really just a matter of following a convention.
+
+The build system is based on hybrid of Ant and Maven. The build scripts are based on Ant. 
