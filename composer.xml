@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<project name="composer" basedir=".">
+    <echo message="Checking for POM: ${project}/pom.xml" />
+    <available file="${project}/pom.xml" property="pom.exists" />
+    
+    <target name="get_maven_dependencies" if="pom.exists" description="Gets the dependencies from Maven">
+        <echo message=">>> get_maven_dependencies" />
+        <ant antfile="build.xml" dir="${project}" target="composerdependencies" />
+    </target>
+	
+    <target name="importproject" depends="get_maven_dependencies" description="Imports a Composer project">
+        <echo message=">>> importproject" />
+        <fail unless="dmproject" message="Property not defined: $${dmproject}" />
+        <emc.importProject dmproject="${dmproject}" failonerror="true" />
+    </target>
+
+    <target name="buildproject" depends="importproject" description="Builds a Composer project">
+        <echo message=">>> buildproject" />
+        <fail unless="dmproject" message="Property not defined: $${dmproject}" />
+        <emc.build dmproject="${dmproject}" failonerror="true" />
+    </target>
+
+    <target name="packageproject" depends="buildproject" description="Packages a Composer project into a DAR">
+        <echo message=">>> packageproject" />
+        <fail unless="dmproject" message="Property not defined: $${dmproject}" />
+        <fail unless="dar" message="Property not defined: $${dar}" />
+        <delete file="${dar}" />
+        <emc.dar dmproject="${dmproject}"
+                 manifest="bin/dar/default.dardef.artifact"
+                 dar="${dar}" />
+    </target>
+
+    <target name="installdar2documentum" description="Installs a DAR file to a Documentum repository">
+        <echo message=">>> installproject" />
+        <fail unless="dar" message="Property not defined: $${dar}" />
+        <fail unless="docbase" message="Property not defined: $${docbase}" />
+        <fail unless="username" message="Property not defined: $${username}" />
+        <fail unless="password" message="Property not defined: $${password}" />
+        <emc.install dar="${dar}"
+                     docbase="${docbase}"
+                     username="${username}"
+                     password="${password}" />
+    </target>
+        
+    <target name="installdar2maven" depends="packageproject" description="Installs the DAR to a local Maven repository">
+        <fail unless="project" message="Property not defined: $${project}" />
+		<ant antfile="build.xml" dir="${project}" target="installdar2maven" />
+    </target>
+    
+    <target name="deploydar2maven" depends="packageproject" description="Deploys the DAR to a remote Maven repository">
+        <fail unless="project" message="Property not defined: $${project}" />
+		<ant antfile="build.xml" dir="${project}" target="deploydar2maven" />
+    </target>
+    
+</project>

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<project name="webtop" default="package" basedir=".">
+	<!-- properties -->
+	<dirname property="project.dir" file="${ant.file.imported}"/>
+	<echo message="project.dir=${project.dir}" />
+	
+	<!-- imports -->
+	<property environment="env" />
+	
+	<!-- override project specific properties, do not check into svn -->
+	<property file="${project.dir}/local.build.properties" />
+	
+	<!-- project specific properties -->
+	<property file="${project.dir}/build.properties" />
+	
+	<!-- import macros, targets, etc -->
+	<import file="${project.dir}/../../common.xml" />
+	
+	<target name="package" depends="war" description="Creates the WAR" />
+	
+	<target name="install" depends="package" description="Installs the WAR to the local Maven repository">
+	    <echo message="Installing WAR" />
+		<mvninstall file="${target.dir}/webtop.war"
+		            groupId="com.markdav.projectx" artifactId="webtop"
+		            version="1.0.0-SNAPSHOT" packaging="war" uniqueVersion="false" />
+	</target>
+	
+	<target name="deploy" depends="package" description="Deploys the WAR to the remote Maven repository">
+	    <echo message="Deploying module WAR" />
+		<mvndeploy file="${target.dir}/webtop.war"
+		           groupId="com.markdav.projectx" artifactId="webtop"
+		           version="1.0.0-SNAPSHOT" packaging="war" uniqueVersion="false"
+		           url="${mvn.snapshots.url}" repositoryId="${mvn.snapshots.id}" />
+	</target>
+</project>

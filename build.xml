@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<project name="projectx" basedir="." default="package">
+	
+	<target name="deploy" description="Deploys packages for the sub-projects">
+		<ant antfile="build.xml" dir="java-projects/bof-java" target="deploy" />
+		<ant antfile="build.xml" dir="web-projects/webtop" target="deploy" />
+	</target>
+
+	<target name="install" description="Installs packages for the sub-projects">
+		<ant antfile="build.xml" dir="java-projects/bof-java" target="install" />
+		<ant antfile="build.xml" dir="web-projects/webtop" target="install" />
+	</target>
+
+	<target name="package" description="Creates packages for the sub-projects">
+		<ant antfile="build.xml" dir="java-projects/bof-java" target="package" />
+		<ant antfile="build.xml" dir="web-projects/webtop" target="package" />
+	</target>
+
+	<target name="test" description="Runs JUnit tests in the sub-projects">
+		<ant antfile="build.xml" dir="java-projects/bof-java" target="test" />
+		<ant antfile="build.xml" dir="web-projects/webtop" target="test" />
+	</target>
+
+	<target name="compile" description="Compiles source code in the sub-projects">
+		<ant antfile="build.xml" dir="java-projects/bof-java" target="compile" />
+		<ant antfile="build.xml" dir="web-projects/webtop" target="compile" />
+	</target>
+
+	<target name="clean" description="Cleans generated artifacts in the sub-projects">
+		<ant antfile="build.xml" dir="java-projects/bof-java" target="clean" />
+		<ant antfile="build.xml" dir="web-projects/webtop" target="clean" />
+	</target>
+	
+</project>

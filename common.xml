@@ -1,0 +1,469 @@
+<?xml version="1.0"?>
+<project name="common" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+
+	<property file="${project.dir}/../../common.properties" />
+    <echo message="Checking for POM: ${project}/pom.xml" />
+    <available file="${project.dir}/pom.xml" property="pom.exists" />
+	<available file="${dar.file}" property="dar.exists" />
+	<condition property="packed.webapp.exists">
+	    <available file="${webapp.packed.product.path}" />
+	</condition>
+	<condition property="unpacked.webapp.missing">
+	    <available file="${webapp.unpacked.product.dir}/WEB-INF" type="dir" />
+	</condition>
+	<available file="${mvn.ant.tasks.jar.path}" property="mvn.ant.tasks.exists" />
+
+	<!--          -->
+	<!-- Filesets -->
+	<!--          -->
+
+	<fileset id="tools.fileset" dir="${tools.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<!--          -->
+	<!--  Paths   -->
+	<!--          -->
+
+	<path id="tools.classpath">
+		<fileset refid="tools.fileset" />
+	</path>
+
+	<path id="compile.classpath">
+		<fileset refid="compile.dependencies.fileset" />
+	</path>
+
+	<path id="test.classpath">
+		<fileset refid="compile.dependencies.fileset" />
+		<fileset refid="test.dependencies.fileset" />
+	</path>
+
+	<!--        -->
+	<!-- Macros -->
+	<!--        -->
+	
+    <macrodef name="require">
+        <attribute name="property" />
+        <sequential>
+            <fail unless="@{property}">Property $${@{property}} not specified</fail>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="checkdar">
+        <sequential>
+            <fail unless="dar.name" message="The DAR name has not been specified: $${dar.name}" />
+            <fail unless="dar.exists" message="The DAR does not exist: ${dar.file}" />
+        </sequential>
+    </macrodef>
+    
+	<macrodef name="testsingle">
+		<attribute name="test" />
+		<sequential>
+            <mkdir dir="${test.report.dir}" />
+            <junit printsummary="${junit.printsummary}"
+			       haltonfailure="${junit.haltonfailure}"
+			       showoutput="${junit.showoutput}">
+                <classpath>
+                    <path refid="test.classpath" />
+                </classpath>
+                <formatter type="plain" />
+                <formatter type="xml" />
+                <test fork="${junit.fork}" name="@{test}" />
+            </junit>
+		</sequential>
+    </macrodef>
+
+    <macrodef name="test">
+        <sequential>
+            <mkdir dir="${test.report.dir}" />
+            <junit printsummary="${junit.printsummary}"
+	               haltonfailure="${junit.haltonfailure}"
+	               showoutput="${junit.showoutput}">
+                <classpath>
+                    <path refid="test.classpath" />
+                </classpath>
+                <formatter type="plain" />
+                <formatter type="xml" />
+                <batchtest fork="${junit.fork}" todir="${test.report.dir}">
+                    <fileset dir="${test.src.dir}">
+                        <include name="**/*Test.class"/>
+                    </fileset>
+                </batchtest>
+            </junit>
+            <junitreport todir="${test.report.dir}">
+                <fileset dir="${test.report.dir}">
+                    <include name="TEST-*.xml" />
+                </fileset>
+                <report todir="${test.report.dir}" />
+            </junitreport>
+        </sequential>
+    </macrodef>
+	
+	<macrodef name="showreport">
+		<attribute name="report" />
+		<sequential>
+	        <exec executable="${browser.path}" spawn="true">
+			    <arg value="@{report}"/>
+		    </exec>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="yuicompress">
+		<attribute name="dir" />
+		<attribute name="includes" />
+		<sequential>
+			<apply executable="java" parallel="false">
+				<fileset dir="@{dir}" includes="@{includes}" />
+				<arg line="-jar" />
+				<arg path="${yuicompressor.jar}" />
+				<arg line="-v" />
+				<srcfile />
+				<arg line="-o" />
+				<mapper type="glob" from="*.js" to="@{dir}/*.min.js" />
+				<targetfile />
+			</apply>
+		</sequential>
+	</macrodef>
+
+    <macrodef name="compile">
+		<sequential>
+            <mkdir dir="${java.target.dir}" />
+            <javac srcdir="${java.src.dir}"
+                   destdir="${java.target.dir}"
+                   classpathref="compile.classpath"
+                   verbose="${javac.verbose}"
+                   target="${javac.target}" />
+		</sequential>
+    </macrodef>
+	
+    <macrodef name="makejar">
+		<attribute name="includes" />
+		<attribute name="name" />
+        <sequential>
+		    <mkdir dir="${target.dir}" />
+            <jar jarfile="${target.dir}/@{name}" basedir="${java.target.dir}" includes="@{includes}">
+                <manifest>
+                    <attribute name="Built-By" value="${user.name}"/>
+                    <attribute name="Implementation-Title" value="@{name}" />
+                    <attribute name="Implementation-Vendor" value="${app.vendor}" />
+                </manifest>
+            </jar>
+	    </sequential>
+    </macrodef>
+    
+    <macrodef name="makewar">
+        <sequential>
+            <war destfile="${target.dir}/${webapp.name}"
+                 basedir="${webapp.build.dir}"
+                 webxml="${webapp.build.dir}/WEB-INF/web.xml" />
+        </sequential>
+    </macrodef>
+        
+    <macrodef name="assemblewar">
+        <sequential>
+            <mergewarfiles />
+            <interpolatewar />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="interpolatewar">
+        <sequential>
+            <interpolate dir="${webapp.build.dir}/WEB-INF/classes"
+                         includes="*.properties"
+                         properties="${resources.src.dir}/${profile}.properties" />
+            <interpolate dir="${webapp.build.dir}/custom"
+                         includes="**/*.properties"
+                         properties="${resources.src.dir}/${profile}.properties" />
+            <interpolate dir="${webapp.build.dir}/custom"
+                         includes="**/*.xml"
+                         properties="${resources.src.dir}/${profile}.properties" />
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="interpolate">
+        <attribute name="dir" />
+        <attribute name="includes" />
+        <attribute name="properties" />
+        <sequential>
+            <echo message="Interpolating @{dir}/@{includes}" />
+            <replace dir="@{dir}" replacefilterfile="@{properties}">
+                <include name="@{includes}" />
+            </replace>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="mergewarfiles">
+        <sequential>
+		    <mkdir dir="${webapp.build.dir}/WEB-INF/classes" />
+            <mvnunpack />
+            <copy todir="${webapp.build.dir}" overwrite="true">
+                <fileset dir="${webapp.dir}">
+                    <include name="**/*" />
+                </fileset>
+            </copy>
+            <copy todir="${webapp.build.dir}/WEB-INF/classes" overwrite="true">
+                <fileset dir="${java.target.dir}">
+                    <include name="**/*" />
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+    
+	<macrodef name="updatezip">
+		<attribute name="destfile" />
+		<attribute name="basedir" />
+		<sequential>
+			<zip destfile="@{destfile}" 
+				 basedir="@{basedir}"
+				 whenempty="skip"
+				 update="true"/>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="makezip">
+		<attribute name="name" />
+		<attribute name="extn" />
+		<attribute name="sourcedir" />
+		<attribute name="outputdir" />
+		<sequential>
+			<mkdir dir="@{outputdir}" />
+			<zip destfile="@{outputdir}/@{name}.@{extn}"
+				 basedir="@{sourcedir}"
+				 whenempty="create" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="makegzip">
+		<attribute name="name" />
+		<attribute name="extn" />
+		<attribute name="sourcedir" />
+		<attribute name="outputdir" />
+		<sequential>
+			<mkdir dir="@{outputdir}" />
+			<tar tarfile="@{outputdir}/@{name}.tar" basedir="@{sourcedir}" />
+			<gzip destfile="@{outputdir}/@{name}.@{extn}"
+				  src="@{outputdir}/@{name}.tar" />
+			<delete file="@{outputdir}/@{name}.tar" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="makejavadoc">
+		<sequential>
+			<mkdir dir="${javadoc.target.dir}" />
+			<javadoc access="public"
+					 destdir="${javadoc.target.dir}"
+					 author="true"
+					 version="true"
+					 use="true"
+					 windowtitle="${javadoc.title}"
+					 doctitle="${javadoc.title}"
+					 bottom="${javadoc.title}">
+				<fileset dir="${java.src.dir}" defaultexcludes="yes">
+					<include name="**/*.java" />
+				</fileset>
+				<link href="${javadoc.jdk.url}" />
+			</javadoc>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="clean">
+		<sequential>
+			<delete dir="${target.dir}" failonerror="false" includeemptydirs="true" />
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="unpack">
+		<attribute name="file" />
+		<attribute name="outputdir" />
+		<sequential>
+			<mkdir dir="@{outputdir}" />
+			<unzip src="@{file}" dest="@{outputdir}" overwrite="true" />
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="mvnunpack">
+	    <sequential>
+	        <echo message="Unpacking WAR from Maven" />
+		    <exec executable="mvn" os="Mac OS,Mac OS X,Linux,Solaris,SunOS,HP-UX,AIX,FreeBSD" failonerror="true">
+			    <arg value="dependency:unpack" />
+		    </exec>
+			<exec executable="cmd" os="Windows NT,Windows XP,Windows 2003">
+				<arg value="/c mvn.bat" />
+			    <arg value="dependency:unpack" />
+			</exec>
+        </sequential>
+	</macrodef>
+	
+	<macrodef name="mvninstall">
+		<attribute name="file" />
+        <attribute name="groupId" />
+        <attribute name="artifactId" />
+        <attribute name="version" />
+        <attribute name="packaging" />
+        <attribute name="uniqueVersion" />
+	    <sequential>
+	        <echo message="Installing @{file} to Maven => @{groupId}:@{artifactId}:@{version}:@{packaging}" />
+
+		    <exec executable="mvn" os="Mac OS,Mac OS X,Linux,Solaris,SunOS,HP-UX,AIX,FreeBSD" failonerror="true">
+			    <arg value="install:install-file" />
+                <arg value="-DgeneratePom=true" />
+                <arg value="-Dfile=@{file}" />
+                <arg value="-DgroupId=@{groupId}" />
+                <arg value="-DartifactId=@{artifactId}" />
+                <arg value="-Dversion=@{version}" />
+                <arg value="-Dpackaging=@{packaging}" />
+                <arg value="-DuniqueVersion=@{uniqueVersion}" />
+		    </exec>
+			<exec executable="cmd" os="Windows NT,Windows XP,Windows 2003">
+				<arg value="/c mvn.bat" />
+				<arg value="install:install-file" />
+                <arg value="-DgeneratePom=true" />
+				<arg value="-Dfile=@{file}" />
+				<arg value="-DgroupId=@{groupId}" />
+				<arg value="-DartifactId=@{artifactId}" />
+				<arg value="-Dversion=@{version}" />
+				<arg value="-Dpackaging=@{packaging}" />
+                <arg value="-DuniqueVersion=@{uniqueVersion}" />
+			</exec>
+        </sequential>
+	</macrodef>
+	
+    <macrodef name="mvndeploy">
+        <attribute name="file" />
+        <attribute name="groupId" />
+        <attribute name="artifactId" />
+        <attribute name="version" />
+        <attribute name="packaging" />
+        <attribute name="uniqueVersion" />
+        <attribute name="url" />
+        <attribute name="repositoryId" />
+        <sequential>
+	        <echo message="Deploying @{file} to Maven => @{groupId}:@{artifactId}:@{version}:@{packaging}" />
+		    <exec executable="mvn" os="Mac OS,Mac OS X,Linux,Solaris,SunOS,HP-UX,AIX,FreeBSD" failonerror="true">
+                <arg value="deploy:deploy-file" />
+                <arg value="-DgeneratePom=true" />
+                <arg value="-Dfile=@{file}" />
+                <arg value="-DgroupId=@{groupId}" />
+                <arg value="-DartifactId=@{artifactId}" />
+                <arg value="-Dversion=@{version}" />
+                <arg value="-Dpackaging=@{packaging}" />
+                <arg value="-DuniqueVersion=@{uniqueVersion}" />
+                <arg value="-Durl=@{url}" />
+                <arg value="-DrepositoryId=@{repositoryId}" />
+            </exec>
+			<exec executable="cmd" os="Windows NT,Windows XP,Windows 2003">
+                <arg value="/c mvn.bat" />
+                <arg value="deploy:deploy-file" />
+                <arg value="-DgeneratePom=true" />
+                <arg value="-Dfile=@{file}" />
+                <arg value="-DgroupId=@{groupId}" />
+                <arg value="-DartifactId=@{artifactId}" />
+                <arg value="-Dversion=@{version}" />
+                <arg value="-Dpackaging=@{packaging}" />
+                <arg value="-DuniqueVersion=@{uniqueVersion}" />
+                <arg value="-Durl=@{url}" />
+                <arg value="-DrepositoryId=@{repositoryId}" />
+            </exec>
+        </sequential>
+    </macrodef>
+    
+    <!--              -->
+ 	<!--  Presetdefs  -->
+ 	<!--              -->
+ 
+    <presetdef name="installdar">
+	    <mvninstall file="${dar.file}"
+	                groupId="${mvn.default.group.id}" artifactId="${dar.file}"
+	                version="${mvn.default.version}" packaging="dar" uniqueVersion="false" />
+    </presetdef>
+ 
+    <presetdef name="deploydar">
+	    <mvndeploy file="${dar.file}"
+	               groupId="${mvn.default.group.id}" artifactId="${dar.file}"
+	               version="${mvn.default.version}" packaging="dar" uniqueVersion="false"
+	               url="${mvn.snapshots.url}" repositoryId="${mvn.snapshots.id}" />
+    </presetdef>
+     
+    <!--           -->
+ 	<!--  Targets  -->
+ 	<!--           -->
+
+	<target name="get_maven_ant_tasks" description="Downloads the Maven Ant tasks">
+	    <echo message="Getting Maven Ant tasks.." />
+	    <mkdir dir="${tools.dir}" />
+	    <get src="${mvn.ant.tasks.url}" dest="${mvn.ant.tasks.jar.path}" usetimestamp="true" />
+	</target>
+	    
+	<target name="init_maven" depends="get_maven_ant_tasks" description="Initialises maven-ant tasks">
+	    <echo message="Initialising classpaths.." />
+	    <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+                 uri="urn:maven-artifact-ant"
+                 classpathref="tools.classpath" />
+	    <artifact:pom id="mypom" file="${project.dir}/pom.xml" />
+        <artifact:dependencies pathId="compile.classpath" filesetId="compile.dependencies.fileset"
+                               pomRefId="mypom" useScope="compile" type="jar,pom" />
+        <artifact:dependencies pathId="runtime.classpath" filesetId="runtime.dependencies.fileset"
+                               pomRefId="mypom" useScope="runtime" type="jar,pom" />
+        <artifact:dependencies pathId="test.classpath" filesetId="test.dependencies.fileset"
+                               pomRefId="mypom" useScope="test" type="jar,pom" />
+        <artifact:dependencies pathId="classpath" filesetId="dependencies.fileset"
+                               pomRefId="mypom" type="jar,pom" />
+	</target>
+	
+	<target name="compile" depends="init_maven" description="Compiles the module java source">
+		<echo message="Compiling module java source.." />
+		<compile />
+	</target>
+	
+	<target name="clean" description="Cleans any generated artifacts">
+        <echo message="Cleaning.." />
+        <clean />
+	</target>
+	
+	<target name="test" depends="compile" description="Runs the JUnit tests">
+	    <echo message="Running JUnit tests.." />
+	    <test />
+	</target>
+	
+	<target name="javadoc" depends="compile" description="Generates Javadoc documentation">
+	    <makejavadoc />
+	</target>
+
+	<target name="installdar2maven" description="Installs the DAR to the local Maven repository">
+	    <echo message="Installing module DAR: ${dar.file}.." />
+	    <checkdar />
+		<installdar artifactId="${dar.name}" />
+	</target>
+
+	<target name="deploydar2maven" description="Deploys the DAR to the remote Maven repository">
+	    <echo message="Deploying module DAR.." />
+	    <checkdar />
+		<deploydar artifactId="${dar.name}" />
+	</target>
+	
+	<target name="composerdependencies" depends="init_maven"
+	        description="Gets artifacts from Maven for Composer">
+	    <echo message="Getting Composer dependencies.." />
+        <copy todir="${project.dir}/lib">
+        	<fileset refid="dependencies.fileset" />
+        	<mapper type="flatten" />
+        </copy>
+    </target>
+    
+    <target name="webappdependencies" depends="init_maven"
+	        description="Gets dependencies from Maven for webapp">
+	    <echo message="Getting webapp dependencies.." />
+	    <mkdir dir="${webapp.build.dir}/WEB-INF/lib" />
+        <copy todir="${webapp.build.dir}/WEB-INF/lib">
+        	<fileset refid="runtime.dependencies.fileset" />
+        	<mapper type="flatten" />
+        </copy>
+    </target>
+	
+	<target name="war" depends="webappdependencies, compile" description="Builds the webapp">
+	    <echo message="Building webapp" />
+	    <assemblewar />
+	    <makewar />
+	</target>
+    
+</project>

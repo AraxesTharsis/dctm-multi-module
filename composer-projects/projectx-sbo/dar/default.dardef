@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ASCII"?>
+<Artifact:Artifact xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Artifact="http://documentum.emc.com/infrastructure/12012007/artifact" xmlns:dardef="http://documentum.emc.com/infrastructure/12012007/dardef" xmlns:dclass="http://documentum.emc.com/artifact/12012007/dclass" xmlns:installparameter="installparameter" xmlns:jardef="http://documentum.emc.com/artifact/12012007/jardef" xmlns:moduledef="http://documentum.emc.com/artifact/12012007/moduledef" urn="urn:com.emc.ide.artifact.dardef/default?artifactURI=file:/Users/markdav/dev/projectx/composer-projects/projectx-sbo/dar/default.dardef" categoryId="com.emc.ide.artifact.dardef">
+  <dataModel xsi:type="dardef:DarDef" objectName="projectx-sbo" contentType="jar" sourceDir="bin" name="projectx-sbo">
+    <objectType href="urn:com.emc.ide.artifact.dclass/dmc_dar?artifactURI=platform:/resource/DFS2/inst/dclass/dmc_dar.type#//@dataModel"/>
+    <version/>
+    <artifacts xsi:type="jardef:JarDef" href="urn:com.emc.ide.artifact.jardef.jardef/px-numberservice-impl?artifactURI=file:/Users/markdav/dev/projectx/composer-projects/projectx-sbo/Artifacts/JAR%20Definitions/px-numberservice-impl.jardef#//@dataModel"/>
+    <artifacts xsi:type="jardef:JarDef" href="urn:com.emc.ide.artifact.jardef.jardef/px-numberservice-api?artifactURI=file:/Users/markdav/dev/projectx/composer-projects/projectx-sbo/Artifacts/JAR%20Definitions/px-numberservice-api.jardef#//@dataModel"/>
+    <artifacts xsi:type="moduledef:ModuleDef" href="urn:com.emc.ide.artifact.moduledef/px-numberservice-sbo?artifactURI=file:/Users/markdav/dev/projectx/composer-projects/projectx-sbo/Artifacts/Modules/px-numberservice-sbo.module#//@dataModel"/>
+    <artifacts xsi:type="installparameter:FolderParameter" href="urn:com.emc.ide.folderparameter/Dar+Install+Folder?artifactURI=file:/Users/markdav/dev/projectx/composer-projects/projectx-sbo/Artifacts/Installation%20Parameters/darinstallfolder.parameter#//@dataModel"/>
+    <artifacts xsi:type="dclass:DClass" href="urn:com.emc.ide.artifact.dclass/dmc_dar?artifactURI=platform:/resource/DFS2/inst/dclass/dmc_dar.type#//@dataModel"/>
+    <artifacts xsi:type="dardef:DarDef" href="urn:com.emc.ide.artifact.dardef/default?artifactURI=file:/Users/markdav/dev/projectx/composer-projects/projectx-sbo/dar/default.dardef#//@dataModel"/>
+    <darInstallOptionsSet>
+      <location xsi:type="installparameter:FolderParameter" href="urn:com.emc.ide.folderparameter/Dar+Install+Folder?artifactURI=file:/Users/markdav/dev/projectx/composer-projects/projectx-sbo/Artifacts/Installation%20Parameters/darinstallfolder.parameter#//@dataModel"/>
+      <upgradeOption xsi:type="dardef:UpgradeOption"/>
+    </darInstallOptionsSet>
+  </dataModel>
+</Artifact:Artifact>
