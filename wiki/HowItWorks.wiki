@@ -17,7 +17,15 @@ This project is an experiment in making Documentum development a bit more mainst
   * [http://www.documentum.com Documentum Composer]
 
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+= Approach to Development =
+Using the setup described in this project it should be possible for developers to work in the following way:
+
+  * checkout source code from source code repository (e.g. Subversion)
+  * run `mvn eclipse:eclipse` or `mvn idea:idea` to create IDE project files
+  * import projects in IDE
+  * use IDE support for Ant to compile, run JUnit tests, etc
+  * commit source code to source code repository
+  * build server triggers build job from code commit
+  * build job generates compiles code, runs JUnit tests, creates JAR, WAR and DAR artifacts
+  * build job deploys JAR, WAR and DAR artifacts to Maven repository
+  * build job optionally deploys DAR artifacts to Documentum repository
