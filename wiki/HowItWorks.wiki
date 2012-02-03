@@ -1,5 +1,3 @@
-#Description of how the build system works
-
 = Introduction =
 
 In an ideal world Documentum development would follow the same pattern as mainstream Enterprise Java development practices where tools such as Maven have become popular in standardising and (arguably) simplifying build and deployment processes. [http://martinfowler.com/articles/continuousIntegration.html Continuous Integration] has also helped in fostering good build practices.
@@ -34,6 +32,7 @@ Using the setup described in this project it should be possible for developers t
 
 I tried, and failed, to use a 100% Maven-based approach but the main problem was that Maven only supports the generation of multiple artifacts (e.g. BOF JARs) if you set up 1 POM per artifact. This basically means that you have to set up a shedload of sub-projects if your Documentum solution uses a bunch of !JarDefs (and most projects do). This is impractical. The things that I really like about Maven though were dependency management, standardisation of project structure and standardisation of project goals (or targets in Ant lingo).
 
-I like Ant. It's simple and flexible. It can be used for multi-project development with a bit of care but there's no OOTB support for dependency management and there's no standard project structure. But we can add dependency management through the use of Maven Ant tasks and standard project structure is really just a matter of following a convention.
+I like Ant. It's simple and flexible. It can be used for multi-project development with a bit of care but there's no OOTB support for dependency management and there's no standard project structure. But we can add dependency management through the use of Maven Ant tasks and standard project structure is really just a matter of following a convention as you'll see below.
 
-The build system is based on hybrid of Ant and Maven. The build scripts are based on Ant. 
+== Project Structure ==
+*TODO*
