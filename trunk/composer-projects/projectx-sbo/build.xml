@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<project name="projectx-sbo" default="composerdependencies" basedir=".">
+	<dirname property="project.dir" file="${ant.file.imported}"/>
+	<import file="${project.dir}/../../common.xml" />
+</project>

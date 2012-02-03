@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ASCII"?>
+<Artifact:Artifact xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Artifact="http://documentum.emc.com/infrastructure/12012007/artifact" xmlns:jardef="http://documentum.emc.com/artifact/12012007/jardef" urn="urn:com.emc.ide.artifact.jardef.jardef/px-numberservice-api?artifactURI=file:/Users/markdav/dev/projectx/composer-projects/projectx-sbo/Artifacts/JAR%20Definitions/px-numberservice-api.jardef" categoryId="com.emc.ide.artifact.jardef.jardef">
+  <dataModel xsi:type="jardef:JarDef" objectName="px-numberservice-api" contentType="jar">
+    <objectType href="urn:com.emc.ide.artifact.dclass/dmc_jar?name=dmc_jar#//@dataModel"/>
+    <aspectName href="urn:com.emc.ide.artifact.aspectmoduledef/com.documentum.fc.bof.bootstrap.DfModuleItemChangeMonitor?aspectname=com.documentum.fc.bof.bootstrap.DfModuleItemChangeMonitor#//@dataModel"/>
+    <contentTypeFormat href="urn:com.emc.ide.artifact.format/jar?name=jar#//@dataModel"/>
+    <resource xsi:type="jardef:JarResource" jarFile="//@contentStore/@contentEntries.0/@value"/>
+  </dataModel>
+  <viewModel xsi:type="Artifact:DefaultArtifactViewModel"/>
+  <contentStore>
+    <contentEntries key="numberservice-api-1.0.0-SNAPSHOT.jar">
+      <value filePath="lib/numberservice-api-1.0.0-SNAPSHOT.jar"/>
+    </contentEntries>
+  </contentStore>
+</Artifact:Artifact>

@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<project name="bof-java" default="package" basedir=".">
+	<!-- properties -->
+	<dirname property="project.dir" file="${ant.file.imported}"/>
+	<echo message="project.dir=${project.dir}" />
+	
+	<!-- imports -->
+	<property environment="env" />
+	
+	<!-- override project specific properties, do not check into svn -->
+	<property file="${project.dir}/local.build.properties" />
+	
+	<!-- project specific properties -->
+	<property file="${project.dir}/build.properties" />
+	
+	<!-- import macros, targets, etc -->
+	<import file="${project.dir}/../../common.xml" />
+	
+	<target name="package" depends="compile" description="Creates the JARs">
+		<echo message="Creating module JARs" />
+		<makejar name="numberservice-api.jar" includes="org/markdav/projectx/bof/numberservice/api/**" />
+		<makejar name="numberservice-impl.jar" includes="org/markdav/projectx/bof/numberservice/impl/**" />
+	</target>
+	
+	<target name="install" depends="package" description="Installs the JARs to the local Maven repository">
+	    <echo message="Installing module JARs" />
+		<mvninstall file="${target.dir}/numberservice-api.jar"
+		            groupId="com.markdav.projectx" artifactId="numberservice-api"
+		            version="1.0.0-SNAPSHOT" packaging="jar" uniqueVersion="false" />
+		<mvninstall file="${target.dir}/numberservice-impl.jar"
+		            groupId="com.markdav.projectx" artifactId="numberservice-impl"
+		            version="1.0.0-SNAPSHOT" packaging="jar" uniqueVersion="false" />
+	</target>
+	
+	<target name="deploy" depends="package" description="Deploys the JARs to the remote Maven repository">
+	    <echo message="Deploying module JARs" />
+		<mvndeploy file="${target.dir}/numberservice-api.jar"
+		           groupId="com.markdav.projectx" artifactId="numberservice-api"
+		           version="1.0.0-SNAPSHOT" packaging="jar" uniqueVersion="false"
+		           url="${mvn.snapshots.url}" repositoryId="${mvn.snapshots.id}" />
+		<mvndeploy file="${target.dir}/numberservice-impl.jar"
+		           groupId="com.markdav.projectx" artifactId="numberservice-impl"
+		           version="1.0.0-SNAPSHOT" packaging="jar" uniqueVersion="false"
+		           url="${mvn.snapshots.url}" repositoryId="${mvn.snapshots.id}" />
+	</target>
+</project>
