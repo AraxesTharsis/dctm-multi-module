@@ -229,3 +229,54 @@ The webtop project contains the following files and folders:
 </p>
   * *build.xml*: This is the project build script
   * *pom.xml*: This is a Maven configuration file that defines dependencies that are needed to compile the WAR
+<p>
+The `webtop` project follows the same general pattern as the `bof-java` project. Again we have a pom.xml for defining dependencies and a build.xml in which we define how to package, install and deploy the WAR. 
+<p>
+The available Ant targets are as follows:
+</p>
+ * *clean*: Cleans any generated artifacts
+ * *compile*: Compiles the module java source
+ * *deploy*: Deploys the WAR to the remote Maven repository
+ * *install*: Installs the WAR to the local Maven repository
+ * *javadoc*: Generates Javadoc documentation
+ * *package*: Creates the WAR
+ * *test*: Runs the JUnit tests
+ * *war*: Builds the webapp
+<p>
+The WAR dependencies are displayed below. You can see that it includes the SBO API JAR and what appears to be two copies of Webtop. The first reference to Webtop ensures that the Webtop JARs are included in the classpath. The second reference to Webtop is used for a different purpose. It is used so that the Webtop WAR can be unpacked into the project. Our Webtop customisations will be merged with the standard Webtop WAR contents. This is done automatically through the `war` target. Please note that the `war` target only assembles the web application files. It is the `package` target that actually constructs the WAR.
+</p>
+{{{
+	<dependencies>
+        <dependency>
+        	<groupId>com.markdav.projectx</groupId>
+        	<artifactId>numberservice-api</artifactId>
+        	<version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+        	<groupId>emc.webtop</groupId>
+        	<artifactId>emc.webtop</artifactId>
+        	<version>6.7.1</version>
+        	<type>pom</type>
+        	<scope>provided</scope>
+        </dependency>
+        <dependency>
+        	<groupId>emc.webtop</groupId>
+        	<artifactId>emc.webtop.war</artifactId>
+        	<version>6.7.1</version>
+        	<type>war</type>
+        	<scope>provided</scope>
+        </dependency>
+	</dependencies>
+}}}
+<p>
+The 'war' target - TODO - stuff about unpack
+</p>
+<p>
+Unlike Maven, Ant doesn't have support for profiles. This is an very useful feature that would allow you to create environment-specific configurations. For example, we could deploy different versions of dfc.properties and log4j properties. The `war` target is configured to substitute tokens that exist in XML and properties files that exist under the WDK custom directory and properties files that exist under WEB-INF/classes. It resolves the actual values from the following files:
+</p>
+ * *src/main/resources/development.properties*
+ * *src/main/resources/staging.properties*
+ * *src/main/resources/production.properties*
+<p>
+You can specify which environment to build for by specifying the `profile` in the system properties. For example, `ant install -Dprofile=production` would build the production WAR, package it and install it to the local Maven repository. The default profile is development.
+</p>
