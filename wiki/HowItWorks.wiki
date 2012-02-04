@@ -181,6 +181,7 @@ The `install` target installs the packaged artifacts to the local Maven reposito
 		           url="${mvn.snapshots.url}" repositoryId="${mvn.snapshots.id}" />
 	</target>
 }}}
+
 === composer-projects ===
 <p>
 In the below screenshot you can see that we have two Composer projects named projectx-base and projectx-sbo. 
@@ -191,7 +192,32 @@ In the below screenshot you can see that we have two Composer projects named pro
 <p>
 The projectx-sbo project is used to deploy SBOs and consequently defines a couple of JarDefs. The JARs that these JarDefs reference are built by the bof-java project. We reference these JARs through dependencies that are defined in pom.xml.
 </p>
-
+{{{
+	<dependencies>
+        <dependency>
+        	<groupId>com.markdav.projectx</groupId>
+        	<artifactId>numberservice-api</artifactId>
+        	<version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+        	<groupId>com.markdav.projectx</groupId>
+        	<artifactId>numberservice-impl</artifactId>
+        	<version>1.0.0-SNAPSHOT</version>
+        </dependency>
+	</dependencies>
+}}}
+<p>
+The ant build script, build.xml, just imports the commons.xml, specifying that the default target is to resolve any dependencies. The Composer project configuration has been modified to invoke a new AntBuilder - i.e. it invokes the build.xml script and therefore fetches the JARs that we need before building the DAR.
+<p>
+{{{
+<project name="projectx-sbo" default="composerdependencies" basedir=".">
+	<dirname property="project.dir" file="${ant.file.imported}"/>
+	<import file="${project.dir}/../../common.xml" />
+</project>
+}}}
+</p>
+We can use the imported targets and `installdar2maven` and `deploydar2maven` to make the DAR available through Maven.
+</p>
 
 === web-projects ===
 <p>
