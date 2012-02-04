@@ -80,7 +80,7 @@ The following files exist in the project root:
 
 === java-projects ===
 <p>
-In the below screenshot you can see that we have a single Java project named bof-java. 
+In the below screenshot you can see that we have a single Java project named bof-java. The project structure is based on Maven's standard project structure. All source files exist under `src`. Artifacts such as JARs, JUnit reports and Javadocs are generated under `target`.
 </p>
 <img src="http://dctm-multi-module.googlecode.com/svn/trunk/wiki-images/java-projects.png" />
 <p>
@@ -187,7 +187,11 @@ In the below screenshot you can see that we have two Composer projects named pro
 </p>
 <img src="http://dctm-multi-module.googlecode.com/svn/trunk/wiki-images/composer-projects.png" />
   * *build.xml*: This is the project build script
-  * *pom.xml*: This is a Maven configuration file that defines dependencies that are referenced in JarDef definitions
+  * *pom.xml*: This is a Maven configuration file that defines project dependencies
+<p>
+The projectx-sbo project is used to deploy SBOs and consequently defines a couple of JarDefs. The JARs that these JarDefs reference are built by the bof-java project. We reference these JARs through dependencies that are defined in pom.xml.
+</p>
+
 
 === web-projects ===
 <p>
