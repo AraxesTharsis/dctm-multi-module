@@ -1,3 +1,4 @@
+#labels Featured
 = Introduction =
 
 In an ideal world Documentum development would follow the same pattern as mainstream Enterprise Java development practices where tools such as Maven have become popular in standardising and (arguably) simplifying build and deployment processes. [http://martinfowler.com/articles/continuousIntegration.html Continuous Integration] has also helped in fostering good build practices.
@@ -67,7 +68,25 @@ Unfortunately Documentum artifacts such as the DFS and DFC are not available in 
 <p>
 There's a useful [http://code.google.com/p/dctm-commons/source/browse/trunk/scripts/dependencies/dfs-sdk/prep_publish_dfs.groovy script] that illustrates how to scan the DFS distribution and construct a shell script that deploys the JARs using invocations of the aforementioned Maven command line utility. It's written in [http://groovy.codehaus.org Groovy]. If Groovy isn't your thing then don't worry. The script is easy to ready and it should be straightforward to port it to whatever language you prefer.
 </p>
-
+<p>
+If you decide to deploy the artifacts via script then you'll most likely run into an authentication error. You can get around this by specifying credentials in your Maven settings file at ~/.m2/settings.xml. the following snippet defines credentials for two of the default repositories that exist in a standard Nexus installation:
+</p>
+{{{
+<settings>
+	<servers>
+		<server>
+			<id>releases</id>
+			<username>admin</username>
+			<password>admin123</password>
+		</server>
+		<server>
+			<id>snapshots</id>
+			<username>admin</username>
+			<password>admin123</password>
+		</server>
+	</servers>
+</settings>
+}}}
 == Project Structure ==
 <p>
 The project structure is pretty straightforward. Project will exist under one of the top level folders:
