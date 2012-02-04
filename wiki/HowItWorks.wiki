@@ -304,3 +304,45 @@ Unlike Maven, Ant doesn't have support for profiles. This is an very useful feat
 <p>
 You can specify which environment to build for by specifying the `profile` in the system properties. For example, `ant install -Dprofile=production` would build the production WAR, package it and install it to the local Maven repository. The default profile is development.
 </p>
+
+== Continuous Integration ==
+All the steps up to this point facilitates multi-module project builds using Maven-managed dependencies. What we're going to do now is to automate the build using the Jenkins build server using the following steps.
+
+=== Create Job to Build JARs Using Jenkins UI ===
+ * Create free-style software project (e.g. I named this projectx-java)
+ * Specify the SVN endpoint (e.g. svn://buildserver/projectx/trunk)
+ * Specify the build trigger (e.g. poll Subversion every 5 minutes by specifying `'*/5 * * * *'` as the schedule)
+ * Specify that the master script '/build.xml' is invoked using targets 'install' and 'deploy'
+ * Specify that artifacts should be archived (I used the pattern `java-projects/bof-java/target/*.jar,web-projects/**/*.war`)
+ * Specify that projectx-composer job is invoked by post-build trigger
+
+Please note that the post-build trigger can only be configured after the target job has been created.
+
+=== Create Job to Build DARs Using Jenkins UI ===
+
+ * Create free-style software project (e.g. I named this projectx-composer)
+ * Specify the SVN endpoint (e.g. svn://buildserver/projectx/trunk)
+ * Paste the contents of jenkins-composer-build-script-example.txt into the shell window
+ * Specify that artifacts should be archived (I used the pattern `*.dar`)
+
+Please note that you may need to modify the script to reflect your environment. At the beginning of the script are a number of variables that allow you to specify values such as the path to Headless Composer, the workspace path and deployment credentials.
+
+At the end of the script are calls function to the create_dar and deploy_dar functions. Comment out the deploy_dar calls if you do not require the DARs to be automatically deployed.
+
+= Results =
+If all goes well you will end up with an automated build system that will:
+
+ * facilitate dependency management
+ * facilitate multi-module development
+ * check that developers have checked in all relevant source files (otherwise the compile would fail)
+ * runs potentially lengthy JUnit tests and alert developers to failures
+ * build the latest JARs, WARs and DARs and make them available through Nexus
+ * automatically deploy WARs to application servers and DARs to Documentum repositories
+
+The JARs and WARs will be available in Jenkins:
+
+<img src="http://dctm-multi-module.googlecode.com/svn/trunk/wiki-images/projectx-java.png" />
+
+The DARs will be also available in Jenkins:
+
+<img src="http://dctm-multi-module.googlecode.com/svn/trunk/wiki-images/projectx-composer.png" />
