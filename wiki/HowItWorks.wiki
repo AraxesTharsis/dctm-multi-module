@@ -269,9 +269,6 @@ The WAR dependencies are displayed below. You can see that it includes the SBO A
 	</dependencies>
 }}}
 <p>
-The 'war' target - TODO - stuff about unpack
-</p>
-<p>
 Unlike Maven, Ant doesn't have support for profiles. This is an very useful feature that would allow you to create environment-specific configurations. For example, we could deploy different versions of dfc.properties and log4j properties. The `war` target is configured to substitute tokens that exist in XML and properties files that exist under the WDK custom directory and properties files that exist under WEB-INF/classes. It resolves the actual values from the following files:
 </p>
  * *src/main/resources/development.properties*
