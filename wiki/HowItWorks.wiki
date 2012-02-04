@@ -60,6 +60,11 @@ I tried, and failed, to use a 100% Maven-based approach but the main problem was
 I like Ant. It's simple and flexible. It can be used for multi-project development with a bit of care but there's no OOTB support for dependency management and there's no standard project structure. But we can add dependency management through the use of Maven Ant tasks and standard project structure is really just a matter of following a convention as you'll see below.
 </p>
 
+== Maven Dependencies ==
+<p>
+Unfortunately Documentum artifacts such as the DFS and DFC are not available in public Maven repositories. This isn't ideal but we can deploy Documentum artifacts to our Nexus server. There are a couple of ways that we can do this. We can use the Nexus UI to upload artifacts. We can also use Maven's command line utility (e.g. `mvn deploy:deploy-file`). There are quite a few JARs in the DFS so this is a little time consuming. It's probably more sensible to script this. There's a useful [script http://code.google.com/p/dctm-commons/source/browse/trunk/scripts/dependencies/dfs-sdk/prep_publish_dfs.groovy] that illustrates how to scan the DFS distribution and construct a shell script that deploys the JARs using invocations of the aforementioned Maven command line utility. It's written in [Groovy http://groovy.codehaus.org]. If Groovy isn't your thing then don't worry. The script is easy to ready and it should be straightforward to port it to whatever language you prefer.
+</p>
+
 == Project Structure ==
 <p>
 The project structure is pretty straightforward. Project will exist under one of the top level folders:
