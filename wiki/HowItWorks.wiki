@@ -7,12 +7,34 @@ In an ideal world Documentum development would follow the same pattern as mainst
 This project is an experiment in making Documentum development a bit more mainstream.
 
 = Tools for the Job =
-  * [http://nexus.sonatype.org Nexus Maven Repository Manager]
+
+== Source Code Repository Server ==
+  * [http://subversion.apache.org Subversion Server]
+
+== Nexus Maven Repository Server ==
+  * [http://www.java.com Java]
   * [http://tomcat.apache.org Apache Tomcat]
+  * [http://maven.apache.org Apache Maven]
+
+== Jenkins Build Server ==
+  * [http://www.java.com Java]
+  * [http://tomcat.apache.org Apache Tomcat]
+  * [http://maven.apache.org Apache Maven]
+  * [http://ant.apache.org Apache Ant]
+  * [http://subversion.apache.org Subversion Client]
+  * [http://nexus.sonatype.org Nexus Maven Repository Manager]
+  * [http://www.documentum.com Documentum Headless Composer]
+
+== Developer Workstation ==
+  * [http://www.java.com Java]
   * [http://ant.apache.org Apache Ant]
   * [http://maven.apache.org Apache Maven]
-  * [http://maven.apache.org/ant-tasks Maven Ant Tasks]
+  * [http://subversion.apache.org Subversion Client]
   * [http://www.documentum.com Documentum Composer]
+
+Please note that  [http://maven.apache.org/ant-tasks Maven Ant Tasks] are downloaded on demand by the Ant build scripts.
+
+As Nexus and Jenkins are both Java web applications they can be hosted on the same Tomcat instance.
 
 = Approach to Development =
 Using the setup described in this project it should be possible for developers to work in the following way:
@@ -53,3 +75,6 @@ The following files exist in the project root:
   * *composer.xml*: contains targets used to build DARs (is referenced by the Jenkins build script)
   * *jenkins-composer-build-script-example.txt*: Example DAR build/deploy script for Jenkins
   *  *README.txt*: Read-me file
+<p>
+
+</p>
