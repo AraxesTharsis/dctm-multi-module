@@ -316,7 +316,7 @@ All the steps up to this point facilitates multi-module project builds using Mav
  * Specify that artifacts should be archived (I used the pattern `java-projects/bof-java/target/*.jar,web-projects/**/*.war`)
  * Specify that projectx-composer job is invoked by post-build trigger
 
-Please note that the post-build trigger can only be configured after the target job has been created.
+Please note that the post-build trigger can only be configured after the target job has been created. You can optionally specify that the WAR is deployed to an application server as a post-build activity. Jenkins makes this easy - you just have to specify the endpoint to deploy to and the administrator credentials.
 
 === Create Job to Build DARs Using Jenkins UI ===
 
@@ -346,3 +346,7 @@ The JARs and WARs will be available in Jenkins:
 The DARs will be also available in Jenkins:
 
 <img src="http://dctm-multi-module.googlecode.com/svn/trunk/wiki-images/projectx-composer.png" />
+
+All generated JAR, WAR and DAR artifacts will also be deployed to the Nexus Maven Repository:
+
+<img src="http://dctm-multi-module.googlecode.com/svn/trunk/wiki-images/nexus.png" />
