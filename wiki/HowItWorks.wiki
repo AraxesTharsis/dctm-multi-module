@@ -29,10 +29,27 @@ Using the setup described in this project it should be possible for developers t
   * post-build Jenkins task deploys WAR to application server
 
 = Build System =
-
+<p>
 I tried, and failed, to use a 100% Maven-based approach but the main problem was that Maven only supports the generation of multiple artifacts (e.g. BOF JARs) if you set up 1 POM per artifact. This basically means that you have to set up a shedload of sub-projects if your Documentum solution uses a bunch of !JarDefs (and most projects do). This is impractical. The things that I really like about Maven though were dependency management, standardisation of project structure and standardisation of project goals (or targets in Ant lingo).
-
+</p>
+<p>
 I like Ant. It's simple and flexible. It can be used for multi-project development with a bit of care but there's no OOTB support for dependency management and there's no standard project structure. But we can add dependency management through the use of Maven Ant tasks and standard project structure is really just a matter of following a convention as you'll see below.
+</p>
 
 == Project Structure ==
-*TODO*
+<p>
+The project structure is pretty straightforward. Project will exist under one of the top level folders:
+</p>
+  * *java-projects*: contains sub-projects that generate JARs
+  * *composer-projects*: contains sub-projects that generate DARs
+  * *web-projects*: contains sub-projects that generate WARs
+<img src="http://dctm-multi-module.googlecode.com/svn/trunk/wiki-images/project-structure.png" />
+<p>
+The following files exist in the project root:
+</p>
+  * *build.xml*: master build script used to build all sub-projects
+  * *common.properties*: contains properties that are referenced by shared macros and targets
+  * *common.xml*: contains shared targets and macros that are used by sub-projects
+  * *composer.xml*: contains targets used to build DARs (is referenced by the Jenkins build script)
+  * *jenkins-composer-build-script-example.txt*: Example DAR build/deploy script for Jenkins
+  *  *README.txt*: Read-me file
