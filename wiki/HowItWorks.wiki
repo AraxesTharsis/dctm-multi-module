@@ -190,7 +190,7 @@ In the below screenshot you can see that we have two Composer projects named pro
   * *build.xml*: This is the project build script
   * *pom.xml*: This is a Maven configuration file that defines project dependencies
 <p>
-The projectx-sbo project is used to deploy SBOs and consequently defines a couple of JarDefs. The JARs that these JarDefs reference are built by the bof-java project. We reference these JARs through dependencies that are defined in pom.xml.
+The projectx-sbo project is used to deploy SBOs and consequently defines a couple of !JarDefs. The JARs that these !JarDefs reference are built by the bof-java project. We reference these JARs through dependencies that are defined in pom.xml.
 </p>
 {{{
 	<dependencies>
@@ -207,7 +207,7 @@ The projectx-sbo project is used to deploy SBOs and consequently defines a coupl
 	</dependencies>
 }}}
 <p>
-The ant build script, build.xml, just imports the commons.xml, specifying that the default target is to resolve any dependencies. The Composer project configuration has been modified to invoke a new AntBuilder - i.e. it invokes the build.xml script and therefore fetches the JARs that we need before building the DAR.
+The ant build script, build.xml, just imports the commons.xml, specifying that the default target is to resolve any dependencies. The Composer project configuration has been modified to invoke a new !AntBuilder - i.e. it invokes the build.xml script and therefore fetches the JARs that we need before building the DAR.
 <p>
 {{{
 <project name="projectx-sbo" default="composerdependencies" basedir=".">
